@@ -324,7 +324,7 @@ function TabExpediente({ paciente }: { paciente: Paciente }) {
           <div>
             <p className="text-xs text-neutral-500 mb-1">Fecha de inicio</p>
             <p className="text-sm text-neutral-800">
-              {format(new Date(paciente.fecha_inicio), "d 'de' MMMM 'de' yyyy", { locale: es })}
+              {paciente.fecha_inicio ? format(new Date(paciente.fecha_inicio), "d 'de' MMMM 'de' yyyy", { locale: es }) : '—'}
             </p>
           </div>
         </div>
