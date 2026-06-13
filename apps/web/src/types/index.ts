@@ -85,8 +85,8 @@ export interface Paciente {
   antecedentes_medicos?: string
   antecedentes_familiares?: string
   antecedentes?: string
-  medicamentos?: string | string[]
-  alergias?: string | string[]
+  medicamentos?: string[]
+  alergias?: string[]
   embarazo?: string
   parto?: string
   desarrollo_motor?: string
