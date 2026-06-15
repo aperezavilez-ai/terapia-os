@@ -1,5 +1,5 @@
 import { createClient as createAdminClient, type User } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createClientFromRequest } from '@/lib/supabase/server'
 
 function admin() {
   return createAdminClient(
@@ -14,6 +14,12 @@ async function resolveUser(request?: Request): Promise<User | null> {
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.slice(7)
     const { data: { user }, error } = await admin().auth.getUser(token)
+    if (!error && user) return user
+  }
+
+  if (request) {
+    const supabase = createClientFromRequest(request)
+    const { data: { user }, error } = await supabase.auth.getUser()
     if (!error && user) return user
   }
 
