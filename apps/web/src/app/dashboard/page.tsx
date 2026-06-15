@@ -290,34 +290,32 @@ export default function DashboardPage() {
 
       const hace14 = new Date(fechaHoy)
       hace14.setDate(hace14.getDate() - 14)
+      const hace90 = new Date(fechaHoy)
+      hace90.setDate(hace90.getDate() - 90)
+
       const { data: pacientesActivosList } = await supabase
         .from('pacientes')
         .select('id')
         .eq('clinica_id', clinicaId)
         .eq('activo', true)
 
-      let sinCitaReciente = 0
-      for (const p of pacientesActivosList || []) {
-        const { count } = await supabase
-          .from('citas')
-          .select('*', { count: 'exact', head: true })
-          .eq('paciente_id', p.id)
-          .eq('estado', 'completada')
-          .gte('fecha_inicio', hace14.toISOString())
-        if (!count) sinCitaReciente++
-      }
+      const { data: citasRecientes } = await supabase
+        .from('citas')
+        .select('paciente_id')
+        .eq('clinica_id', clinicaId)
+        .eq('estado', 'completada')
+        .gte('fecha_inicio', hace14.toISOString())
 
-      const hace90 = new Date(fechaHoy)
-      hace90.setDate(hace90.getDate() - 90)
-      let sinEvalReciente = 0
-      for (const p of pacientesActivosList || []) {
-        const { count } = await supabase
-          .from('evaluaciones')
-          .select('*', { count: 'exact', head: true })
-          .eq('paciente_id', p.id)
-          .gte('fecha', hace90.toISOString())
-        if (!count) sinEvalReciente++
-      }
+      const { data: evalsRecientes } = await supabase
+        .from('evaluaciones')
+        .select('paciente_id')
+        .eq('clinica_id', clinicaId)
+        .gte('fecha', hace90.toISOString())
+
+      const conCita = new Set((citasRecientes || []).map(c => c.paciente_id))
+      const conEval = new Set((evalsRecientes || []).map(e => e.paciente_id))
+      const sinCitaReciente = (pacientesActivosList || []).filter(p => !conCita.has(p.id)).length
+      const sinEvalReciente = (pacientesActivosList || []).filter(p => !conEval.has(p.id)).length
 
       const inicioSemana = startOfWeek(fechaHoy, { weekStartsOn: 1 }).toISOString()
       const { count: sesionesSemana } = await supabase

@@ -43,28 +43,7 @@ Plataforma integral con IA, portal para padres, integración con WhatsApp Busine
 ```
 terapia-saas/
 ├── apps/
-│   ├── web/                    # App principal (terapeutas y admin)
-│   │   ├── src/
-│   │   │   ├── app/            # Next.js App Router
-│   │   │   │   ├── dashboard/
-│   │   │   │   ├── pacientes/
-│   │   │   │   ├── agenda/
-│   │   │   │   ├── sesiones/
-│   │   │   │   ├── evaluaciones/
-│   │   │   │   ├── planes/
-│   │   │   │   ├── ia/
-│   │   │   │   ├── facturacion/
-│   │   │   │   ├── mensajes/
-│   │   │   │   ├── reportes/
-│   │   │   │   ├── configuracion/
-│   │   │   │   └── api/        # API Routes (IA, WhatsApp, PDF, Cron)
-│   │   │   ├── components/
-│   │   │   │   └── layout/     # AppLayout (sidebar + topbar)
-│   │   │   └── types/          # TypeScript types
-│   │   └── public/
-│   │       ├── manifest.json   # PWA Manifest
-│   │       └── sw.js           # Service Worker
-│   └── portal-padres/          # ⚠️ OBSOLETO — ver DEPRECATED.md (usar apps/web/portal)
+│   └── web/                    # App principal (staff + portal padres en /portal)
 ├── packages/
 │   ├── db/                     # Tipos de DB y cliente Supabase
 │   └── ui/                     # Componentes compartidos
@@ -107,6 +86,13 @@ cp .env.example apps/web/.env.local
 # supabase/migrations/001_schema_completo.sql
 # supabase/migrations/002_portal_padres.sql
 # supabase/migrations/003_storage_archivos.sql
+# supabase/migrations/004_rls_staff_clinico.sql
+```
+
+O automáticamente (requiere `SUPABASE_DB_URL` en `.env.local`):
+
+```bash
+node --env-file=apps/web/.env.local apps/web/scripts/apply-pending-migrations.mjs
 ```
 
 3. En **Authentication → Settings**:

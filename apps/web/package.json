@@ -54,6 +54,7 @@
     "@types/node": "^20.0.0",
     "typescript": "^5.4.0",
     "@types/react-big-calendar": "^1.8.0",
-    "sharp": "^0.34.2"
+    "sharp": "^0.34.2",
+    "pg": "^8.13.0"
   }
 }

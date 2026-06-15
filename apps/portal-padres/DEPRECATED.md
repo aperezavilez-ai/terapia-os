@@ -1,30 +1,20 @@
-# ⚠️ DEPRECATED — No usar en producción
+# ⚠️ App eliminada — usar `apps/web/portal`
 
-Esta app (`apps/portal-padres`) quedó **obsoleta**.
+Esta carpeta quedó como **referencia histórica**. El código fue removido.
 
-El portal de padres vive integrado en la app principal:
+## Portal en producción
 
-| Antes (obsoleto)     | Ahora (producción)              |
-|----------------------|---------------------------------|
-| `localhost:3001`     | `https://www.aprendamosjuntos.mx/portal/*` |
-| `apps/portal-padres` | `apps/web/src/app/portal/`      |
+| Ruta | Descripción |
+|------|-------------|
+| `/portal/citas` | Citas del paciente |
+| `/portal/mensajes` | Chat con terapeuta |
+| `/portal/reportes` | Reportes y documentos |
+| `/portal/perfil` | Perfil del paciente |
 
-## Rutas actuales
+**Código:** `apps/web/src/app/portal/`
 
-- `/portal/citas` — Citas y confirmación
-- `/portal/mensajes` — Chat con terapeuta
-- `/portal/reportes` — Reportes IA y documentos
-- `/portal/perfil` — Perfil del paciente
+## Demo padres
 
-## Credenciales demo
-
+- URL: https://www.aprendamosjuntos.mx/auth/login
 - Email: `padre.demo@aprendamosjuntos.mx`
 - Password: `Padre2026!`
-
-## Motivo de deprecación
-
-- Auth y datos en **Server Components** (más seguro)
-- Un solo deploy en Vercel
-- Middleware redirige rol `padre` → `/portal/*`
-
-No agregues features aquí. Si necesitas cambios en el portal, edita `apps/web/src/app/portal/`.
