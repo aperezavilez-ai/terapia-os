@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import {
@@ -47,7 +47,7 @@ export default function ExpedientePaciente() {
   const [planes, setPlanes] = useState<PlanTerapeutico[]>([])
   const [archivos, setArchivos] = useState<ArchivoPaciente[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     if (pacienteId) fetchExpediente()

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import {
@@ -54,7 +54,7 @@ function ModalNuevaEvaluacion({
   const [observaciones, setObservaciones] = useState('')
   const [recomendaciones, setRecomendaciones] = useState('')
   const [guardando, setGuardando] = useState(false)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     if (tipoSeleccionado) fetchItems()
@@ -342,7 +342,7 @@ export default function EvaluacionesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [filtroTipo, setFiltroTipo] = useState<string>('todos')
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     fetchData()

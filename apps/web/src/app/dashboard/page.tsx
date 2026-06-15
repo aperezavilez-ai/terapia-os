@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   UsersIcon,
@@ -83,7 +83,7 @@ export default function DashboardPage() {
   const [alertas, setAlertas] = useState<AlertaDashboard[]>([])
   const [loading, setLoading] = useState(true)
   const [fechaHoy] = useState(new Date())
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     fetchDashboard()

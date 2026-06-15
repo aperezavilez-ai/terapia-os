@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import {
   PaperAirplaneIcon,
   PhoneIcon,
@@ -71,7 +71,7 @@ export default function MensajesPage() {
   const [clinicaId, setClinicaId] = useState('')
   const [usuarioId, setUsuarioId] = useState('')
   const chatEndRef = useRef<HTMLDivElement>(null)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => { fetchData() }, [])
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [chatMensajes])

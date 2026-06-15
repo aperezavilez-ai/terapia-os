@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import {
   BuildingOffice2Icon,
   PhoneIcon,
@@ -48,7 +48,7 @@ export default function ConfiguracionPage() {
   const [modalSucursal, setModalSucursal] = useState(false)
   const [formUsuario, setFormUsuario] = useState({ nombre: '', apellidos: '', email: '', rol: 'terapeuta', telefono: '' })
   const [formSucursal, setFormSucursal] = useState({ nombre: '', direccion: '', ciudad: '', estado: '', telefono: '' })
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => { fetchData() }, [])
 

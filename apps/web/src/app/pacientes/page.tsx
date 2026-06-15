@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   PlusIcon,
@@ -32,7 +32,7 @@ export default function PacientesPage() {
   const [totalPacientes, setTotalPacientes] = useState(0)
   const [paginaActual, setPaginaActual] = useState(1)
   const POR_PAGINA = 20
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const fetchPacientes = useCallback(async () => {
     setLoading(true)

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { Calendar, dateFnsLocalizer, Event, View } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay, addHours } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -229,7 +229,7 @@ export default function AgendaPage() {
   const [pacientes, setPacientes] = useState<Paciente[]>([])
   const [terapeutas, setTerapeutas] = useState<Usuario[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     fetchData()

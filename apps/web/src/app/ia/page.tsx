@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import {
   SparklesIcon,
   DocumentTextIcon,
@@ -73,7 +73,7 @@ export default function IAClinicaPage() {
   const [pacientes, setPacientes] = useState<Paciente[]>([])
   const [historial, setHistorial] = useState<ReporteIA[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     fetchData()
@@ -479,14 +479,26 @@ ${instrucciones ? `INSTRUCCIONES ADICIONALES: ${instrucciones}` : ''}
                   </div>
                 )}
 
-                {/* Enviar a padres */}
+                {/* Compartir con padres */}
                 <div className="mt-6 pt-6 border-t border-neutral-100">
-                  <div className="flex gap-3">
-                    <button className="btn-secondary btn-sm">
-                      📱 Enviar por WhatsApp
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      className="btn-primary btn-sm"
+                      onClick={async () => {
+                        if (!resultado?.id) return
+                        const { error } = await supabase
+                          .from('reportes_ia')
+                          .update({ enviado_a_padres: true })
+                          .eq('id', resultado.id)
+                        if (error) toast.error('No se pudo compartir el reporte')
+                        else toast.success('Reporte publicado en el portal de padres')
+                      }}
+                    >
+                      Publicar en portal de padres
                     </button>
-                    <button className="btn-secondary btn-sm">
-                      📧 Enviar por email
+                    <button className="btn-secondary btn-sm" type="button">
+                      Enviar por WhatsApp
                     </button>
                   </div>
                 </div>

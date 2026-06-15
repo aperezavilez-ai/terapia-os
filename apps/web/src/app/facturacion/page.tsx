@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import {
   PlusIcon,
   BanknotesIcon,
@@ -54,7 +54,7 @@ function ModalNuevoCobro({
     registrar_pago: true,
   })
   const [guardando, setGuardando] = useState(false)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const subtotal = parseFloat(form.subtotal) || 0
   const descuento = parseFloat(form.descuento) || 0
@@ -231,7 +231,7 @@ export default function FacturacionPage() {
   const [statsFinanciero, setStatsFinanciero] = useState({
     totalMes: 0, pendiente: 0, pagadoMes: 0, facturasPendientes: 0,
   })
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => { fetchData() }, [])
 

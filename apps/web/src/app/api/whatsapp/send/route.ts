@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 
 const WHATSAPP_API_URL = 'https://graph.facebook.com/v19.0'
 
@@ -12,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Faltan parámetros' }, { status: 400 })
     }
 
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 

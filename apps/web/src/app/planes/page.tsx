@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   PlusIcon,
@@ -44,7 +44,7 @@ function ModalNuevoPlan({
     { descripcion: '', criterio_logro: '', area: '', fecha_meta: '', tipo: 'especifico' },
   ])
   const [guardando, setGuardando] = useState(false)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const toggleArea = (area: string) => {
     setForm(f => ({
@@ -244,7 +244,7 @@ export default function PlanesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [filtroEstado, setFiltroEstado] = useState('activo')
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => { fetchData() }, [])
 

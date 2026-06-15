@@ -1,0 +1,25 @@
+---
+description: Desplegar a producción al terminar cualquier cambio
+alwaysApply: true
+---
+
+# Deploy obligatorio tras cambios
+
+Al completar un cambio o ajuste en el código, **siempre** despliega a producción antes de dar la tarea por terminada.
+
+## Flujo
+
+1. Verificar que el build pasa (`npm run build` en `apps/web`).
+2. Hacer commit de los archivos relevantes (nunca `.env` ni secretos).
+3. Push a `main` o `vercel --prod` desde `apps/web`.
+4. Confirmar que el deploy terminó correctamente.
+
+## Producción
+
+- App: `https://www.aprendamosjuntos.mx`
+- Deploy: Vercel (`apps/web`)
+- Variable crítica: `SUPABASE_SERVICE_ROLE_KEY` en el dashboard de Vercel
+
+## Excepciones
+
+Solo omitir deploy si el usuario pide explícitamente no desplegar en ese momento.

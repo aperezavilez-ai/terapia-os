@@ -1,14 +1,23 @@
 import { redirect } from 'next/navigation'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function HomePage() {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
-  if (session) {
-    redirect('/dashboard')
-  } else {
+  if (!session) {
     redirect('/auth/login')
   }
+
+  const { data: usuario } = await supabase
+    .from('usuarios')
+    .select('rol')
+    .eq('id', session.user.id)
+    .maybeSingle()
+
+  if (usuario?.rol === 'padre') {
+    redirect('/portal/citas')
+  }
+
+  redirect('/dashboard')
 }

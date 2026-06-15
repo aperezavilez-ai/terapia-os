@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   ArrowLeftIcon, UserPlusIcon, CheckCircleIcon,
@@ -62,7 +62,7 @@ export default function NuevoPacientePage() {
   })
   const [guardando, setGuardando] = useState(false)
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const f = (campo: keyof typeof form, valor: string | boolean) =>
     setForm(prev => ({ ...prev, [campo]: valor }))
@@ -108,17 +108,38 @@ export default function NuevoPacientePage() {
 
       // Insertar familiar si se proporcionaron datos
       if (form.familiar_nombre && form.familiar_telefono && paciente) {
-        await supabase.from('familiares').insert({
+        const { data: familiar, error: famError } = await supabase.from('familiares').insert({
           paciente_id: paciente.id,
-          clinica_id: usuario.clinica_id,
-          nombre: form.familiar_nombre,
-          parentesco: form.familiar_parentesco || 'tutor',
-          telefono: form.familiar_telefono,
-          email: form.familiar_email || null,
+          tipo_relacion: form.familiar_parentesco || 'tutor',
+          nombre: form.familiar_nombre.trim(),
+          telefono: form.familiar_telefono.trim(),
+          email: form.familiar_email?.trim() || null,
           tiene_acceso_portal: form.familiar_tiene_acceso_portal,
-          es_contacto_emergencia: true,
-          tutor_legal: true,
-        })
+          es_contacto_principal: true,
+        }).select().single()
+
+        if (famError) {
+          console.error('Error al registrar familiar:', famError)
+        } else if (form.familiar_tiene_acceso_portal && form.familiar_email?.trim() && familiar) {
+          const partes = form.familiar_nombre.trim().split(/\s+/)
+          const res = await fetch('/api/padres/crear-acceso', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: form.familiar_email.trim(),
+              nombre: partes[0] || form.familiar_nombre.trim(),
+              apellidos: partes.slice(1).join(' ') || '',
+              familiar_id: familiar.id,
+              paciente_id: paciente.id,
+            }),
+          })
+          const data = await res.json()
+          if (res.ok) {
+            toast.success(`Portal creado. Contraseña temporal: ${data.password}`, { duration: 12000 })
+          } else {
+            toast.error(data.error || 'No se pudo crear el acceso al portal')
+          }
+        }
       }
 
       toast.success('Paciente registrado exitosamente')

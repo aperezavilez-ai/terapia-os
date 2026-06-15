@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   PlusIcon,
@@ -58,7 +58,7 @@ function ModalSesion({
   const [grabando, setGrabando] = useState<string | null>(null)
   const [guardando, setGuardando] = useState(false)
   const recognitionRef = useRef<any>(null)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   // Planes filtrados por paciente
   const planesFiltrados = planes.filter(p => p.paciente_id === form.paciente_id)
@@ -309,7 +309,7 @@ export default function SesionesPage() {
   const [planes, setPlanes] = useState<PlanTerapeutico[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => { fetchData() }, [])
 

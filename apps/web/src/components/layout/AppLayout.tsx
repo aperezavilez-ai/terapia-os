@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import {
   HomeIcon,
   UsersIcon,
@@ -42,7 +42,7 @@ const navItems = [
 ]
 
 const adminNavItems = [
-  { href: '/sucursales', label: 'Sucursales', icon: BuildingOffice2Icon },
+  { href: '/configuracion?tab=sucursales', label: 'Sucursales', icon: BuildingOffice2Icon },
   { href: '/configuracion', label: 'Configuración', icon: Cog6ToothIcon },
 ]
 
@@ -57,7 +57,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const [notifCount, setNotifCount] = useState(0)
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -89,8 +89,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, [supabase, router])
 
   const handleSignOut = async () => {
+    const supabase = createClient()
     await supabase.auth.signOut()
-    router.push('/auth/login')
+    window.location.assign('/auth/login')
   }
 
   const userInitials = user

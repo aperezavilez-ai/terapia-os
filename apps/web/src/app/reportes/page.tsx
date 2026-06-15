@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import {
   ChartBarIcon,
   ArrowDownTrayIcon,
@@ -49,7 +49,7 @@ export default function ReportesPage() {
     totalPacientes: 0, pacientesActivos: 0, citasMes: 0, asistenciaMes: 0,
     ingresosMes: 0, sesionesTotal: 0,
   })
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => { fetchReportes() }, [periodo])
 

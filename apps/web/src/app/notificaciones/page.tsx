@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import {
   BellIcon, CalendarDaysIcon, BanknotesIcon,
@@ -39,7 +39,7 @@ function formatFecha(fecha: string) {
 export default function NotificacionesPage() {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => { fetchData() }, [])
 
