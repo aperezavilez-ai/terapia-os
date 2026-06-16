@@ -53,6 +53,10 @@ export default function ConfiguracionPage() {
     reporte_mensual: false,
   })
   const [modalUsuario, setModalUsuario] = useState(false)
+  const [modoUsuario, setModoUsuario] = useState<'crear' | 'editar'>('crear')
+  const [usuarioEditandoId, setUsuarioEditandoId] = useState<string | null>(null)
+  const [usuarioEditandoRol, setUsuarioEditandoRol] = useState<string | null>(null)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [modalSucursal, setModalSucursal] = useState(false)
   const [formUsuario, setFormUsuario] = useState({ nombre: '', apellidos: '', email: '', rol: 'terapeuta', telefono: '' })
   const [formSucursal, setFormSucursal] = useState({ nombre: '', direccion: '', ciudad: '', estado: '', telefono: '' })
@@ -67,6 +71,10 @@ export default function ConfiguracionPage() {
       setTabActiva(tab)
     }
     if (params.get('nuevo') === '1' && tab === 'usuarios') {
+      setModoUsuario('crear')
+      setUsuarioEditandoId(null)
+      setUsuarioEditandoRol(null)
+      setFormUsuario({ nombre: '', apellidos: '', email: '', rol: 'terapeuta', telefono: '' })
       setModalUsuario(true)
     }
   }, [])
@@ -75,6 +83,7 @@ export default function ConfiguracionPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) return
+      setCurrentUserId(session.user.id)
       const { data: usuario } = await supabase.from('usuarios').select('clinica_id').eq('id', session.user.id).single()
       if (!usuario) return
 
@@ -155,6 +164,88 @@ export default function ConfiguracionPage() {
       toast.success('Preferencias de notificaciones guardadas')
       fetchData()
     } catch { toast.error('Error al guardar') } finally { setGuardando(false) }
+  }
+
+  const abrirAgregarUsuario = () => {
+    setModoUsuario('crear')
+    setUsuarioEditandoId(null)
+    setUsuarioEditandoRol(null)
+    setFormUsuario({ nombre: '', apellidos: '', email: '', rol: 'terapeuta', telefono: '' })
+    setModalUsuario(true)
+  }
+
+  const abrirEditarUsuario = (usr: Usuario) => {
+    setModoUsuario('editar')
+    setUsuarioEditandoId(usr.id)
+    setUsuarioEditandoRol(usr.rol)
+    setFormUsuario({
+      nombre: usr.nombre,
+      apellidos: usr.apellidos || '',
+      email: usr.email,
+      rol: usr.rol === 'padre' ? 'terapeuta' : usr.rol,
+      telefono: usr.telefono || '',
+    })
+    setModalUsuario(true)
+  }
+
+  const guardarUsuario = async () => {
+    if (modoUsuario === 'crear') {
+      await invitarUsuario()
+      return
+    }
+    if (!usuarioEditandoId || !formUsuario.nombre) {
+      toast.error('Completa los campos obligatorios')
+      return
+    }
+    setGuardando(true)
+    try {
+      const body: Record<string, unknown> = {
+        nombre: formUsuario.nombre,
+        apellidos: formUsuario.apellidos,
+        telefono: formUsuario.telefono,
+      }
+      if (usuarioEditandoRol !== 'padre') {
+        body.rol = formUsuario.rol
+      }
+      const res = await fetch(`/api/staff/usuarios/${usuarioEditandoId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Error al guardar usuario')
+      toast.success('Usuario actualizado')
+      setModalUsuario(false)
+      setUsuarioEditandoId(null)
+      setUsuarioEditandoRol(null)
+      fetchData()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error al guardar usuario')
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  const quitarAccesoUsuario = async (usr: Usuario) => {
+    if (usr.id === currentUserId) {
+      toast.error('No puedes quitar tu propio acceso')
+      return
+    }
+    if (!confirm(`¿Quitar el acceso de ${usr.nombre} ${usr.apellidos || ''}? Ya no podrá iniciar sesión.`)) {
+      return
+    }
+    setGuardando(true)
+    try {
+      const res = await fetch(`/api/staff/usuarios/${usr.id}`, { method: 'DELETE' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Error al quitar acceso')
+      toast.success('Acceso eliminado')
+      fetchData()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error al quitar acceso')
+    } finally {
+      setGuardando(false)
+    }
   }
 
   const invitarUsuario = async () => {
@@ -347,7 +438,7 @@ export default function ConfiguracionPage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-neutral-500">{usuarios.length} usuarios</p>
-                <button onClick={() => setModalUsuario(true)} className="btn-primary btn-sm">
+                <button onClick={abrirAgregarUsuario} className="btn-primary btn-sm">
                   <PlusIcon className="w-4 h-4" /> Agregar usuario
                 </button>
               </div>
@@ -369,9 +460,25 @@ export default function ConfiguracionPage() {
                         <span className={`badge text-2xs ${usr.activo ? 'badge-success' : 'badge-neutral'}`}>
                           {usr.activo ? 'Activo' : 'Inactivo'}
                         </span>
-                        <button className="btn-ghost btn-sm text-neutral-400">
+                        <button
+                          type="button"
+                          onClick={() => abrirEditarUsuario(usr)}
+                          className="btn-ghost btn-sm text-neutral-400 hover:text-primary-600"
+                          title="Editar usuario"
+                        >
                           <PencilIcon className="w-3.5 h-3.5" />
                         </button>
+                        {usr.activo && usr.id !== currentUserId && (
+                          <button
+                            type="button"
+                            onClick={() => quitarAccesoUsuario(usr)}
+                            className="btn-ghost btn-sm text-neutral-400 hover:text-danger-600"
+                            title="Quitar acceso"
+                            disabled={guardando}
+                          >
+                            <XMarkIcon className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -500,13 +607,15 @@ export default function ConfiguracionPage() {
         </div>
       </div>
 
-      {/* Modal: Agregar usuario */}
+      {/* Modal: Agregar / editar usuario */}
       {modalUsuario && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalUsuario(false)} />
           <div className="relative bg-white rounded-2xl shadow-modal w-full max-w-md animate-slide-in-up">
             <div className="flex items-center justify-between p-5 border-b border-neutral-100">
-              <h2 className="text-base font-semibold text-neutral-900">Agregar usuario</h2>
+              <h2 className="text-base font-semibold text-neutral-900">
+                {modoUsuario === 'crear' ? 'Agregar usuario' : 'Editar usuario'}
+              </h2>
               <button onClick={() => setModalUsuario(false)} className="btn-icon text-neutral-400"><XMarkIcon className="w-5 h-5" /></button>
             </div>
             <div className="p-5 space-y-4">
@@ -522,13 +631,23 @@ export default function ConfiguracionPage() {
               </div>
               <div>
                 <label className="label">Email *</label>
-                <input type="email" className="input" value={formUsuario.email} onChange={e => setFormUsuario(f => ({ ...f, email: e.target.value }))} />
+                <input
+                  type="email"
+                  className="input"
+                  value={formUsuario.email}
+                  onChange={e => setFormUsuario(f => ({ ...f, email: e.target.value }))}
+                  disabled={modoUsuario === 'editar'}
+                />
               </div>
               <div>
                 <label className="label">Rol</label>
-                <select className="input" value={formUsuario.rol} onChange={e => setFormUsuario(f => ({ ...f, rol: e.target.value }))}>
-                  {Object.entries(ROLES_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                </select>
+                {modoUsuario === 'editar' && usuarioEditandoRol === 'padre' ? (
+                  <input className="input bg-neutral-50" value="Padre / Tutor" disabled />
+                ) : (
+                  <select className="input" value={formUsuario.rol} onChange={e => setFormUsuario(f => ({ ...f, rol: e.target.value }))}>
+                    {Object.entries(ROLES_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                  </select>
+                )}
               </div>
               <div>
                 <label className="label">Teléfono</label>
@@ -537,7 +656,9 @@ export default function ConfiguracionPage() {
             </div>
             <div className="flex gap-3 p-5 border-t border-neutral-100">
               <button onClick={() => setModalUsuario(false)} className="btn-secondary flex-1">Cancelar</button>
-              <button onClick={invitarUsuario} className="btn-primary flex-1">Agregar usuario</button>
+              <button onClick={guardarUsuario} disabled={guardando} className="btn-primary flex-1">
+                {guardando ? 'Guardando...' : modoUsuario === 'crear' ? 'Agregar usuario' : 'Guardar cambios'}
+              </button>
             </div>
           </div>
         </div>
