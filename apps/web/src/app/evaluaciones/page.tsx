@@ -170,9 +170,9 @@ function ModalNuevaEvaluacion({
   }, {})
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-modal w-full max-w-2xl max-h-[90vh] flex flex-col animate-slide-in-up">
+      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl shadow-modal w-full max-w-2xl max-h-[92vh] sm:max-h-[90vh] flex flex-col animate-slide-in-up">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-neutral-100 shrink-0">
           <div>
@@ -205,19 +205,19 @@ function ModalNuevaEvaluacion({
               </div>
               <div>
                 <label className="label">Área de evaluación</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-2">
                   {TIPOS_EVAL.map(tipo => (
                     <button
                       key={tipo.id}
                       onClick={() => setTipoSeleccionado(tipo.id)}
-                      className={`p-4 rounded-xl border-2 text-left transition-all ${
+                      className={`p-3 sm:p-4 rounded-xl border-2 text-left transition-all ${
                         tipoSeleccionado === tipo.id
                           ? 'border-primary-500 bg-primary-50'
                           : 'border-neutral-200 hover:border-neutral-300'
                       }`}
                     >
-                      <div className="text-2xl mb-2">{tipo.icon}</div>
-                      <p className="text-sm font-medium text-neutral-900">{tipo.label}</p>
+                      <div className="text-xl sm:text-2xl mb-1.5 sm:mb-2">{tipo.icon}</div>
+                      <p className="text-xs sm:text-sm font-medium text-neutral-900">{tipo.label}</p>
                     </button>
                   ))}
                 </div>
@@ -246,12 +246,12 @@ function ModalNuevaEvaluacion({
                   {areaItems.map(item => (
                     <div key={item.id} className="bg-neutral-50 rounded-xl p-4">
                       <p className="text-sm font-medium text-neutral-900 mb-3">{item.nombre}</p>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {Array.from({ length: item.puntaje_max + 1 }, (_, i) => (
                           <button
                             key={i}
                             onClick={() => setPuntaje(item.id, i)}
-                            className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${
+                            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-sm font-bold transition-all ${
                               item.puntaje === i
                                 ? 'bg-primary-600 text-white shadow-sm'
                                 : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary-300'
@@ -438,14 +438,14 @@ export default function EvaluacionesPage() {
           <h1 className="page-title">Evaluaciones</h1>
           <p className="page-subtitle">{evaluaciones.length} evaluaciones registradas</p>
         </div>
-        <button onClick={() => setModalOpen(true)} className="btn-primary">
+        <button onClick={() => setModalOpen(true)} className="btn-primary w-full sm:w-auto justify-center">
           <PlusIcon className="w-4 h-4" />
           Nueva evaluación
         </button>
       </div>
 
       {/* Resumen por área */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="card p-5">
           <h2 className="text-sm font-semibold text-neutral-900 mb-4">Promedios por área</h2>
           <ResponsiveContainer width="100%" height={220}>
@@ -515,7 +515,7 @@ export default function EvaluacionesPage() {
             {evaluacionesFiltradas.map(ev => {
               const tipoConfig = TIPOS_EVAL.find(t => t.id === ev.tipo)
               return (
-                <div key={ev.id} className="flex items-center gap-4 px-5 py-4 hover:bg-neutral-50 transition-colors">
+                <div key={ev.id} className="flex items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-neutral-50 transition-colors">
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0"
                     style={{ background: tipoConfig?.color + '20' }}>
                     {tipoConfig?.icon}
@@ -529,7 +529,7 @@ export default function EvaluacionesPage() {
                       {(ev as any).terapeuta && ` · ${(ev as any).terapeuta.nombre}`}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 shrink-0">
                     {ev.porcentaje != null && (
                       <div className="text-right hidden sm:block">
                         <p className="text-sm font-bold text-neutral-900">{ev.porcentaje.toFixed(0)}%</p>

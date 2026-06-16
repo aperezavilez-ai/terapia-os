@@ -111,7 +111,7 @@ export default function PacientesPage() {
           <h1 className="page-title">Pacientes</h1>
           <p className="page-subtitle">{totalPacientes} pacientes registrados</p>
         </div>
-        <Link href="/pacientes/nuevo" className="btn-primary">
+        <Link href="/pacientes/nuevo" className="btn-primary w-full sm:w-auto justify-center">
           <PlusIcon className="w-4 h-4" />
           Nuevo paciente
         </Link>
@@ -129,7 +129,7 @@ export default function PacientesPage() {
             onChange={(e) => { setBusqueda(e.target.value); setPaginaActual(1) }}
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {filtrosEstado.map((f) => (
             <button
               key={f.value}
@@ -175,7 +175,7 @@ export default function PacientesPage() {
         ) : (
           <>
             {/* Header tabla */}
-            <div className="grid grid-cols-12 gap-4 px-5 py-3 border-b border-neutral-100 bg-neutral-50">
+            <div className="hidden md:grid grid-cols-12 gap-4 px-5 py-3 border-b border-neutral-100 bg-neutral-50">
               <div className="col-span-4 text-xs font-semibold text-neutral-500 uppercase tracking-wide">Paciente</div>
               <div className="col-span-2 text-xs font-semibold text-neutral-500 uppercase tracking-wide">Edad</div>
               <div className="col-span-3 text-xs font-semibold text-neutral-500 uppercase tracking-wide">Terapeuta</div>
@@ -185,12 +185,10 @@ export default function PacientesPage() {
 
             <div className="divide-y divide-neutral-100">
               {pacientes.map((p) => (
-                <div
-                  key={p.id}
-                  className="grid grid-cols-12 gap-4 px-5 py-4 hover:bg-neutral-50 transition-colors items-center"
-                >
+                <div key={p.id} className="px-4 py-4 hover:bg-neutral-50 transition-colors">
+                  <div className="grid grid-cols-12 gap-3 md:gap-4 items-center">
                   {/* Paciente */}
-                  <div className="col-span-4 flex items-center gap-3">
+                  <div className="col-span-12 md:col-span-4 flex items-center gap-3">
                     <div className="shrink-0">
                       {p.foto_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -219,7 +217,7 @@ export default function PacientesPage() {
                   </div>
 
                   {/* Edad */}
-                  <div className="col-span-2">
+                  <div className="col-span-6 md:col-span-2">
                     <p className="text-sm text-neutral-700 font-medium">
                       {calcularEdad(p.fecha_nacimiento)} años
                     </p>
@@ -229,7 +227,7 @@ export default function PacientesPage() {
                   </div>
 
                   {/* Terapeuta */}
-                  <div className="col-span-3">
+                  <div className="col-span-6 md:col-span-3">
                     {(p as any).terapeuta_asignado ? (
                       <div className="flex items-center gap-2">
                         <div className="avatar w-6 h-6 text-2xs shrink-0">
@@ -245,14 +243,14 @@ export default function PacientesPage() {
                   </div>
 
                   {/* Estado */}
-                  <div className="col-span-2">
+                  <div className="col-span-8 md:col-span-2">
                     <span className={`badge ${p.activo ? 'badge-success' : 'badge-neutral'}`}>
                       {p.activo ? 'Activo' : 'Inactivo'}
                     </span>
                   </div>
 
                   {/* Acciones */}
-                  <div className="col-span-1 flex justify-end">
+                  <div className="col-span-4 md:col-span-1 flex justify-end">
                     <div className="relative group">
                       <button className="btn-icon btn-ghost text-neutral-400">
                         <EllipsisVerticalIcon className="w-4 h-4" />
@@ -284,13 +282,14 @@ export default function PacientesPage() {
                       </div>
                     </div>
                   </div>
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Paginación */}
             {totalPaginas > 1 && (
-              <div className="flex items-center justify-between px-5 py-4 border-t border-neutral-100">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-5 py-4 border-t border-neutral-100">
                 <p className="text-xs text-neutral-500">
                   Mostrando {(paginaActual - 1) * POR_PAGINA + 1}-{Math.min(paginaActual * POR_PAGINA, totalPacientes)} de {totalPacientes}
                 </p>

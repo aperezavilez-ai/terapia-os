@@ -63,7 +63,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       </main>
 
       <nav
-        className="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200 flex z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
+        className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm border-t border-neutral-200 flex z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         {NAV.map(item => {
@@ -73,11 +73,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
               key={item.href}
               type="button"
               onClick={() => navigate(item.href)}
-              className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors touch-manipulation ${
-                isActive ? 'text-primary-600' : 'text-neutral-400 active:text-neutral-700'
+              className={`flex-1 flex flex-col items-center gap-1 py-2.5 text-2xs font-medium transition-colors touch-manipulation ${
+                isActive ? 'text-primary-600' : 'text-neutral-500 active:text-neutral-700'
               }`}
             >
-              <item.icon className="w-5 h-5 pointer-events-none" />
+              <item.icon className={`w-5 h-5 pointer-events-none ${isActive ? 'scale-105' : ''}`} />
               <span className="pointer-events-none">{item.label}</span>
             </button>
           )

@@ -407,12 +407,12 @@ export default function DashboardPage() {
             {format(fechaHoy, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
           </p>
         </div>
-        <div className="flex gap-2">
-          <Link href="/pacientes/nuevo" className="btn-primary btn-sm">
+        <div className="flex w-full sm:w-auto gap-2">
+          <Link href="/pacientes/nuevo" className="btn-primary btn-sm flex-1 sm:flex-none justify-center">
             <PlusIcon className="w-4 h-4" />
             Nuevo paciente
           </Link>
-          <Link href="/agenda" className="btn-secondary btn-sm">
+          <Link href="/agenda" className="btn-secondary btn-sm flex-1 sm:flex-none justify-center">
             <CalendarDaysIcon className="w-4 h-4" />
             Ver agenda
           </Link>
@@ -561,14 +561,14 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Citas de hoy */}
         <div className="card lg:col-span-2">
-          <div className="flex items-center justify-between p-5 border-b border-neutral-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 border-b border-neutral-100 gap-3">
             <div>
               <h2 className="text-sm font-semibold text-neutral-900">Citas de hoy</h2>
               <p className="text-xs text-neutral-500">
                 {format(fechaHoy, "d 'de' MMMM", { locale: es })} · {citasHoy.length} programadas
               </p>
             </div>
-            <Link href="/agenda" className="btn-secondary btn-sm">Ver agenda completa</Link>
+            <Link href="/agenda" className="btn-secondary btn-sm w-full sm:w-auto justify-center">Ver agenda completa</Link>
           </div>
           <div className="divide-y divide-neutral-100">
             {citasHoy.length === 0 ? (
@@ -579,7 +579,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               citasHoy.map((cita) => (
-                <div key={cita.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-neutral-50 transition-colors">
+                <div key={cita.id} className="flex items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 hover:bg-neutral-50 transition-colors">
                   <div className="flex flex-col items-center w-10 shrink-0">
                     <ClockIcon className="w-4 h-4 text-neutral-400 mb-0.5" />
                     <span className="text-xs font-semibold text-neutral-700">{cita.hora}</span>
@@ -588,8 +588,8 @@ export default function DashboardPage() {
                     <p className="text-sm font-medium text-neutral-900 truncate">{cita.paciente}</p>
                     <p className="text-xs text-neutral-500 truncate">Terapeuta: {cita.terapeuta}</p>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs text-neutral-400 capitalize">{cita.tipo}</span>
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2 shrink-0">
+                    <span className="text-2xs sm:text-xs text-neutral-400 capitalize">{cita.tipo}</span>
                     <span className={`badge ${estadoCitaColor[cita.estado] || 'badge-neutral'}`}>
                       {estadoCitaLabel[cita.estado] || cita.estado}
                     </span>

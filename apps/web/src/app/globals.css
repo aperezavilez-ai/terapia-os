@@ -181,13 +181,13 @@
 
   /* ===== SECCIONES DE PÁGINA ===== */
   .page-header {
-    @apply flex items-center justify-between mb-6;
+    @apply flex flex-col items-start gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between;
   }
   .page-title {
-    @apply text-xl font-semibold text-neutral-900;
+    @apply text-lg sm:text-xl font-semibold text-neutral-900;
   }
   .page-subtitle {
-    @apply text-sm text-neutral-500 mt-0.5;
+    @apply text-xs sm:text-sm text-neutral-500 mt-0.5;
   }
 
   /* ===== DIVIDER ===== */

@@ -21,8 +21,8 @@ import {
   MagnifyingGlassIcon,
   BuildingOffice2Icon,
   SparklesIcon,
-  ChevronDownIcon,
   UserPlusIcon,
+  Squares2X2Icon,
 } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'
 import type { Usuario } from '@/types'
@@ -52,8 +52,8 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false)
   const [user, setUser] = useState<Usuario | null>(null)
-  const [clinicaNombre, setClinicaNombre] = useState('')
   const [notifCount, setNotifCount] = useState(0)
   const pathname = usePathname()
   const router = useRouter()
@@ -72,7 +72,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
       if (usuario) {
         setUser(usuario as Usuario)
-        setClinicaNombre((usuario as any).clinica?.nombre || 'Mi Clínica')
       }
 
       // Notificaciones no leídas
@@ -109,6 +108,29 @@ export default function AppLayout({ children }: AppLayoutProps) {
     return rol ? labels[rol] || rol : ''
   }
 
+  const mobileTabs = [
+    { href: '/dashboard', label: 'Inicio', icon: HomeIcon },
+    { href: '/pacientes', label: 'Pacientes', icon: UsersIcon },
+    { href: '/agenda', label: 'Agenda', icon: CalendarDaysIcon },
+    { href: '/evaluaciones', label: 'Evals', icon: ClipboardDocumentListIcon },
+  ]
+
+  const mobileMoreItems = [
+    { href: '/sesiones', label: 'Sesiones', icon: ClipboardDocumentListIcon },
+    { href: '/planes', label: 'Planes terapéuticos', icon: DocumentTextIcon },
+    { href: '/ia', label: 'IA Clínica', icon: SparklesIcon },
+    { href: '/reportes', label: 'Reportes', icon: ChartBarIcon },
+    { href: '/facturacion', label: 'Facturación', icon: BanknotesIcon },
+    { href: '/mensajes', label: 'Mensajes', icon: ChatBubbleLeftRightIcon },
+    { href: '/notificaciones', label: 'Notificaciones', icon: BellIcon },
+    ...(user?.rol && ['admin_general', 'director_clinico'].includes(user.rol)
+      ? [{ href: '/configuracion', label: 'Configuración', icon: Cog6ToothIcon }]
+      : []),
+  ]
+
+  const isPathActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`) || pathname.startsWith(`${href}?`)
+
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
@@ -122,7 +144,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           Principal
         </p>
         {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href)
+          const isActive = isPathActive(item.href)
           return (
             <Link
               key={item.href}
@@ -149,7 +171,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
               Administración
             </p>
             {adminNavItems.map((item) => {
-              const isActive = pathname.startsWith(item.href)
+              const isActive = isPathActive(item.href)
               return (
                 <Link
                   key={item.href}
@@ -239,7 +261,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* CONTENIDO PRINCIPAL */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* TOPBAR */}
-        <header className="h-14 bg-white border-b border-neutral-200 flex items-center px-4 lg:px-6 gap-4 shrink-0">
+        <header className="h-14 bg-white border-b border-neutral-200 flex items-center px-3 sm:px-4 lg:px-6 gap-2 sm:gap-4 shrink-0">
           {/* Botón hamburger mobile */}
           <button
             className="lg:hidden btn-icon text-neutral-600"
@@ -249,7 +271,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </button>
 
           {/* Búsqueda */}
-          <div className="flex-1 max-w-sm">
+          <div className="hidden sm:block flex-1 max-w-sm">
             <div className="relative">
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
               <input
@@ -275,11 +297,100 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
         {/* CONTENIDO */}
         <main className="flex-1 overflow-y-auto">
-          <div className="p-4 lg:p-6 max-w-[1400px] mx-auto">
+          <div className="p-4 pb-24 sm:pb-6 lg:p-6 max-w-[1400px] mx-auto">
             {children}
           </div>
         </main>
       </div>
+
+      {/* MOBILE TAB BAR */}
+      <nav
+        className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-neutral-200 bg-white/95 backdrop-blur-sm"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
+        <div className="grid grid-cols-5">
+          {mobileTabs.map((item) => {
+            const isActive = isPathActive(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={clsx(
+                  'flex flex-col items-center justify-center gap-0.5 py-2 text-2xs font-medium transition-colors',
+                  isActive ? 'text-primary-600' : 'text-neutral-500'
+                )}
+              >
+                <item.icon className={clsx('w-5 h-5', isActive && 'scale-105')} />
+                <span>{item.label}</span>
+              </Link>
+            )
+          })}
+          <button
+            type="button"
+            onClick={() => setMobileMoreOpen(true)}
+            className={clsx(
+              'flex flex-col items-center justify-center gap-0.5 py-2 text-2xs font-medium transition-colors',
+              mobileMoreOpen ? 'text-primary-600' : 'text-neutral-500'
+            )}
+          >
+            <Squares2X2Icon className="w-5 h-5" />
+            <span>Más</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* MOBILE MORE SHEET */}
+      {mobileMoreOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex items-end">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setMobileMoreOpen(false)}
+          />
+          <div className="relative w-full bg-white rounded-t-3xl shadow-modal max-h-[78vh] overflow-hidden animate-slide-in-up">
+            <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-neutral-900">Más opciones</h3>
+              <button
+                type="button"
+                className="btn-icon text-neutral-500"
+                onClick={() => setMobileMoreOpen(false)}
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 grid grid-cols-2 gap-2.5 overflow-y-auto">
+              {mobileMoreItems.map((item) => {
+                const isActive = isPathActive(item.href)
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMoreOpen(false)}
+                    className={clsx(
+                      'flex items-center gap-2.5 p-3 rounded-xl border text-sm transition-colors',
+                      isActive
+                        ? 'border-primary-200 bg-primary-50 text-primary-700'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50'
+                    )}
+                  >
+                    <item.icon className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{item.label}</span>
+                  </Link>
+                )
+              })}
+            </div>
+            <div className="p-4 pt-0">
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="btn-secondary w-full text-danger-600"
+              >
+                <ArrowRightOnRectangleIcon className="w-4 h-4" />
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

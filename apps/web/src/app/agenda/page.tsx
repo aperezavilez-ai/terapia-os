@@ -466,7 +466,7 @@ export default function AgendaPage() {
         </div>
         <button
           onClick={() => { setFechaSeleccionada(new Date()); setModalAbierto(true) }}
-          className="btn-primary"
+          className="btn-primary w-full sm:w-auto justify-center"
         >
           <PlusIcon className="w-4 h-4" />
           Nueva cita
@@ -474,10 +474,10 @@ export default function AgendaPage() {
       </div>
 
       {/* Calendario */}
-      <div className="card p-5">
+      <div className="card p-4 sm:p-5">
         {/* Controles del calendario */}
-        <div className="flex items-center justify-between mb-5 gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
+        <div className="flex items-start sm:items-center justify-between mb-5 gap-3 flex-col sm:flex-row">
+          <div className="flex items-center gap-2 flex-wrap">
             <button onClick={() => setFechaActual(new Date())} className="btn-secondary btn-sm">
               Hoy
             </button>
@@ -505,12 +505,12 @@ export default function AgendaPage() {
               {format(fechaActual, vistaActual === 'month' ? 'MMMM yyyy' : "d 'de' MMMM yyyy", { locale: es })}
             </span>
           </div>
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5 w-full sm:w-auto">
             {(['day', 'week', 'month'] as View[]).map((v) => (
               <button
                 key={v}
                 onClick={() => setVistaActual(v)}
-                className={`btn btn-sm ${vistaActual === v ? 'btn-primary' : 'btn-secondary'}`}
+                className={`btn btn-sm flex-1 sm:flex-none ${vistaActual === v ? 'btn-primary' : 'btn-secondary'}`}
               >
                 {v === 'day' ? 'Día' : v === 'week' ? 'Semana' : 'Mes'}
               </button>
@@ -531,34 +531,38 @@ export default function AgendaPage() {
         {loading ? (
           <div className="skeleton h-[500px] w-full" />
         ) : (
-          <Calendar
-            localizer={localizer}
-            events={eventos}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 550 }}
-            view={vistaActual}
-            onView={setVistaActual}
-            date={fechaActual}
-            onNavigate={setFechaActual}
-            onSelectSlot={handleSeleccionarSlot}
-            onSelectEvent={(ev: any) => setEventoSeleccionado(ev)}
-            selectable
-            eventPropGetter={eventStyleGetter as any}
-            messages={{
-              today: 'Hoy',
-              previous: 'Anterior',
-              next: 'Siguiente',
-              month: 'Mes',
-              week: 'Semana',
-              day: 'Día',
-              noEventsInRange: 'Sin citas en este período',
-            }}
-            min={new Date(0, 0, 0, 7, 0, 0)}
-            max={new Date(0, 0, 0, 21, 0, 0)}
-            step={30}
-            timeslots={2}
-          />
+          <div className="overflow-x-auto">
+            <div className="min-w-[760px]">
+              <Calendar
+                localizer={localizer}
+                events={eventos}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: 550 }}
+                view={vistaActual}
+                onView={setVistaActual}
+                date={fechaActual}
+                onNavigate={setFechaActual}
+                onSelectSlot={handleSeleccionarSlot}
+                onSelectEvent={(ev: any) => setEventoSeleccionado(ev)}
+                selectable
+                eventPropGetter={eventStyleGetter as any}
+                messages={{
+                  today: 'Hoy',
+                  previous: 'Anterior',
+                  next: 'Siguiente',
+                  month: 'Mes',
+                  week: 'Semana',
+                  day: 'Día',
+                  noEventsInRange: 'Sin citas en este período',
+                }}
+                min={new Date(0, 0, 0, 7, 0, 0)}
+                max={new Date(0, 0, 0, 21, 0, 0)}
+                step={30}
+                timeslots={2}
+              />
+            </div>
+          </div>
         )}
       </div>
 
